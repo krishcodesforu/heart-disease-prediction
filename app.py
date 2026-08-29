@@ -191,35 +191,54 @@ def prepare_patient_for_model(patient):
 
 def main():
     st.set_page_config(page_title="Heart Disease Prediction", page_icon="❤️", layout="wide")
-    st.title("Heart Disease Prediction App")
+    
+    # Add header animation
+    st.markdown("---")
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.title("❤️ Heart Disease Prediction App")
+    st.markdown("---")
+    
     st.caption("Input patient information and estimate heart disease risk.")
 
     model = load_model()
 
     with st.form("heart_prediction_form"):
         patient = build_patient_data()
-        submitted = st.form_submit_button("Predict")
+        submitted = st.form_submit_button("🔍 Predict Heart Disease Risk", use_container_width=True)
 
     if submitted:
-        patient = prepare_patient_for_model(patient)
-        prediction, probability = predict_heart_disease(patient, model=model)
+        # Add loading animation
+        with st.spinner("🔄 Analyzing patient data..."):
+            patient = prepare_patient_for_model(patient)
+            prediction, probability = predict_heart_disease(patient, model=model)
 
-        st.subheader("Prediction Result")
+        # Display results with animation
+        st.markdown("---")
+        st.subheader("📊 Prediction Result")
         risk_percent = round(probability * 100, 2)
 
-        if prediction == 1:
-            st.error(f"High risk: {risk_percent}% chance of heart disease")
-        else:
-            st.success(f"Low risk: {risk_percent}% chance of heart disease")
+        # Create animated columns for result display
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.metric("Risk Level", "HIGH ⚠️" if prediction == 1 else "LOW ✅")
+        with col2:
+            st.metric("Probability", f"{risk_percent}%")
+        with col3:
+            st.metric("Confidence", f"{100 - risk_percent:.1f}%")
 
+        # Animated progress bar
+        st.markdown("### Risk Probability")
         st.progress(probability)
 
-        st.write("Model probability of heart disease:", f"{risk_percent}%")
-
-        st.info(
-            "Tip: If you have a trained .pkl model, save it as heart_model.pkl in the same folder "
-            "and the app will automatically use it instead of the built-in fallback estimator."
-        )
+        # Show results with color coding
+        if prediction == 1:
+            st.error(f"🚨 High risk: {risk_percent}% chance of heart disease")
+            st.balloons()
+        else:
+            st.success(f"✅ Low risk: {risk_percent}% chance of heart disease")
+        
+        st.markdown("---")
 
 
 if __name__ == "__main__":
