@@ -24,10 +24,12 @@ def inject_css():
     @keyframes pulseRing { 0% { transform: scale(.92); opacity: .65; } 100% { transform: scale(1.25); opacity: 0; } }
     @keyframes shimmer { 0% { background-position: -500px 0; } 100% { background-position: 500px 0; } }
     .hero { padding: 2rem; border-radius: 24px; background: linear-gradient(135deg,#fff1f2,#fff,#eff6ff); border: 1px solid #e2e8f0; margin-bottom: 1.5rem; animation: floatIn .65s ease-out, glow 3s ease-in-out infinite; position: relative; overflow: hidden; }
-    .heart-icon { display:inline-block; font-size:4rem; animation: heartbeat 1.25s ease-in-out infinite; transform-origin:center; filter: drop-shadow(0 8px 14px rgba(239,68,68,.2)); }
-    .main-title { font-size: 3rem; font-weight: 850; line-height:1.05; margin:.2rem 0; }
-    .subtitle { color:#64748b; font-size:1.05rem; }
-    .section-card { animation: floatIn .5s ease-out both; }
+    .heart-icon { display:inline-block; font-size:4rem; animation:heartbeat 1.25s ease-in-out infinite; transform-origin:center; filter:drop-shadow(0 8px 14px rgba(239,68,68,.2)); }
+    .main-title { font-size:3rem; font-weight:850; line-height:1.05; margin:.2rem 0; color:#0f172a !important; }
+    .hero .main-title { color:#0f172a !important; -webkit-text-fill-color:#0f172a !important; text-shadow:0 1px 1px rgba(15,23,42,.05); }
+    .subtitle { color:#475569 !important; font-size:1.05rem; }
+    .hero .subtitle { color:#475569 !important; }
+    .section-card { animation:floatIn .5s ease-out both; }
     .result-card { padding:1.5rem; border-radius:22px; border:1px solid #e2e8f0; background:rgba(255,255,255,.96); box-shadow:0 12px 35px rgba(15,23,42,.10); animation:floatIn .65s ease-out; }
     .result-title { font-size:1.8rem; font-weight:800; }
     .pulse-dot { width:12px; height:12px; border-radius:50%; background:#ef4444; display:inline-block; margin-right:8px; position:relative; }
@@ -35,7 +37,13 @@ def inject_css():
     div.stButton > button, div.stFormSubmitButton > button { border-radius:14px; font-weight:750; min-height:3.2rem; transition:transform .2s, box-shadow .2s; }
     div.stButton > button:hover, div.stFormSubmitButton > button:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(15,23,42,.12); }
     .model-ready { padding:.65rem 1rem; border-radius:12px; background:linear-gradient(90deg,#ecfdf5,#f0fdf4,#ecfdf5); background-size:700px 100%; animation:shimmer 3s linear infinite; border:1px solid #bbf7d0; }
-    @media (max-width: 700px) { .main-title {font-size:2.1rem;} .heart-icon {font-size:3rem;} .hero {padding:1.25rem;} }
+    @media (max-width:700px) {
+        .main-title { font-size:2.1rem; color:#0f172a !important; -webkit-text-fill-color:#0f172a !important; }
+        .hero .main-title { color:#0f172a !important; -webkit-text-fill-color:#0f172a !important; }
+        .heart-icon { font-size:3rem; }
+        .hero { padding:1.25rem; }
+        .subtitle, .hero .subtitle { color:#475569 !important; }
+    }
     </style>
     """, unsafe_allow_html=True)
 
