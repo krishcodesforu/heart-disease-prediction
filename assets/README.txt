@@ -1,0 +1,1 @@
+Animation and sound effects are implemented directly in app.py using CSS and browser audio. No binary assets required.
