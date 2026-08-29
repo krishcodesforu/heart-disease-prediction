@@ -212,7 +212,7 @@ def main():
         else:
             st.success(f"Low risk: {risk_percent}% chance of heart disease")
 
-        st.progress(min_value=0.0, max_value=1.0, value=probability)
+        st.progress(probability)
 
         st.write("Model probability of heart disease:", f"{risk_percent}%")
 
