@@ -29,6 +29,24 @@ MODEL_CANDIDATES = [
 ]
 
 
+def play_success_sound():
+    """Play success sound effect"""
+    st.markdown("""
+    <audio autoplay>
+        <source src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" type="audio/mpeg">
+    </audio>
+    """, unsafe_allow_html=True)
+
+
+def play_warning_sound():
+    """Play warning sound effect"""
+    st.markdown("""
+    <audio autoplay>
+        <source src="https://assets.mixkit.co/active_storage/sfx/2633/2633-preview.mp3" type="audio/mpeg">
+    </audio>
+    """, unsafe_allow_html=True)
+
+
 def load_model():
     """Try to load a trained pickle model if one exists.
     If not found, return None and the app falls back to a built-in risk estimator.
@@ -234,9 +252,11 @@ def main():
         # Show results with color coding
         if prediction == 1:
             st.error(f"🚨 High risk: {risk_percent}% chance of heart disease")
+            play_warning_sound()
             st.balloons()
         else:
             st.success(f"✅ Low risk: {risk_percent}% chance of heart disease")
+            play_success_sound()
         
         st.markdown("---")
 
