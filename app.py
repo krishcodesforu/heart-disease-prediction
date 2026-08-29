@@ -15,6 +15,8 @@ MODEL_CANDIDATES = [
     Path("heart_disease_model.pkl"), Path("models/heart_model.pkl"),
 ]
 
+AUDIO_URL = "https://raw.githubusercontent.com/krishcodesforu/heart-disease-prediction/main/makabhosda_aag.m4a"
+
 
 def inject_css():
     st.markdown("""
@@ -49,84 +51,28 @@ def inject_css():
     """, unsafe_allow_html=True)
 
 
-def play_sound(kind):
-    """Generate a prediction-specific sound in the browser with Web Audio."""
-    sound_configs = {
-        "low": {
-            "label": "🔊 Play Low-Risk Sound",
-            "script": """
-                tone(523, 0.00, 0.16, 'sine', 0.055);
-                tone(659, 0.13, 0.20, 'sine', 0.05);
-                tone(784, 0.30, 0.28, 'sine', 0.045);
-            """,
-        },
-        "moderate": {
-            "label": "🔊 Play Moderate-Risk Sound",
-            "script": """
-                tone(440, 0.00, 0.14, 'sine', 0.05);
-                tone(494, 0.18, 0.14, 'sine', 0.05);
-                tone(440, 0.38, 0.18, 'triangle', 0.045);
-            """,
-        },
-        "high": {
-            "label": "🔊 Play High-Risk Alert",
-            "script": """
-                tone(330, 0.00, 0.18, 'sawtooth', 0.045);
-                tone(330, 0.23, 0.18, 'sawtooth', 0.045);
-                tone(220, 0.48, 0.34, 'triangle', 0.055);
-            """,
-        },
-        "very_high": {
-            "label": "🔊 Play Critical-Risk Alert",
-            "script": """
-                tone(440, 0.00, 0.12, 'square', 0.04);
-                tone(330, 0.16, 0.12, 'square', 0.04);
-                tone(440, 0.32, 0.12, 'square', 0.04);
-                tone(220, 0.50, 0.45, 'sawtooth', 0.05);
-                heartbeat(0.62);
-                heartbeat(0.86);
-            """,
-        },
-    }
-    config = sound_configs[kind]
+def play_custom_audio():
+    """Play the single custom recording automatically after every prediction."""
     components.html(f"""
-    <html><body style="margin:0;background:transparent;font-family:system-ui,-apple-system,sans-serif;">
-    <button id="soundBtn" style="width:100%;border:1px solid #cbd5e1;border-radius:12px;padding:9px 14px;background:#f8fafc;color:#0f172a;font-weight:700;cursor:pointer;">
-      {config['label']}
-    </button>
-    <script>
-    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-    let ctx;
-    function getCtx() {{
-      if (!ctx) ctx = new AudioContextClass();
-      if (ctx.state === 'suspended') ctx.resume();
-      return ctx;
-    }}
-    function tone(freq, start, duration, type, volume) {{
-      const c = getCtx();
-      const osc = c.createOscillator();
-      const gain = c.createGain();
-      osc.type = type;
-      osc.frequency.setValueAtTime(freq, c.currentTime + start);
-      gain.gain.setValueAtTime(0.0001, c.currentTime + start);
-      gain.gain.exponentialRampToValueAtTime(volume, c.currentTime + start + 0.012);
-      gain.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + start + duration);
-      osc.connect(gain).connect(c.destination);
-      osc.start(c.currentTime + start);
-      osc.stop(c.currentTime + start + duration + 0.02);
-    }}
-    function heartbeat(start) {{
-      tone(95, start, 0.09, 'sine', 0.045);
-      tone(72, start + 0.13, 0.11, 'sine', 0.04);
-    }}
-    function play() {{
-      getCtx();
-      {config['script']}
-    }}
-    document.getElementById('soundBtn').addEventListener('click', play);
-    try {{ play(); }} catch (e) {{}}
-    </script></body></html>
-    """, height=52)
+    <html>
+    <body style="margin:0;background:transparent;overflow:hidden;">
+      <audio id="predictionAudio" autoplay playsinline preload="auto">
+        <source src="{AUDIO_URL}" type="audio/mp4">
+      </audio>
+      <script>
+        const audio = document.getElementById('predictionAudio');
+        audio.volume = 1.0;
+        const startAudio = () => {{
+          const promise = audio.play();
+          if (promise) promise.catch(() => {{}});
+        }};
+        startAudio();
+        setTimeout(startAudio, 150);
+        setTimeout(startAudio, 500);
+      </script>
+    </body>
+    </html>
+    """, height=1)
 
 
 def load_model():
@@ -231,31 +177,16 @@ def show_result(prediction, probability, model_name):
     st.markdown("### Risk Probability")
     st.progress(float(np.clip(probability,0,1)), text=f"Estimated probability: {risk_percent:.1f}%")
 
-    if risk_percent < 30:
-        sound_kind = "low"
-        sound_caption = "🟢 Low-risk result sound"
-    elif risk_percent < 60:
-        sound_kind = "moderate"
-        sound_caption = "🟡 Moderate-risk result sound"
-    elif risk_percent < 80:
-        sound_kind = "high"
-        sound_caption = "🔴 High-risk alert sound"
-    else:
-        sound_kind = "very_high"
-        sound_caption = "🚨 Critical-risk alert sound"
-
     if prediction:
         st.error("🚨 The model indicates an elevated likelihood of heart disease. Please consult a qualified healthcare professional for proper evaluation.")
-        play_sound(sound_kind)
     else:
         st.success("✅ The model indicates a lower likelihood of heart disease based on the supplied inputs.")
-        play_sound(sound_kind)
         st.balloons()
 
-    st.caption(sound_caption)
     if model_name: st.caption(f"Prediction generated using: `{model_name}`")
     else: st.warning("No trained pickle model was found. This result uses the app's fallback scoring estimator and should not be treated as a medical diagnosis.")
     st.info("ℹ️ This application is for educational and demonstration purposes only. It does not replace professional medical advice, diagnosis, or treatment.")
+    play_custom_audio()
     st.markdown('</div>', unsafe_allow_html=True)
 
 
@@ -269,7 +200,7 @@ def main():
         st.markdown("### About")
         st.write("Estimate heart disease risk from clinical measurements using the configured prediction model.")
         st.markdown("### ✨ Experience")
-        st.write("Animated interface, live risk visualization and result sound effects.")
+        st.write("Animated interface, live risk visualization and custom prediction audio.")
         st.divider()
         st.caption("Educational tool • Not a medical diagnosis")
 
