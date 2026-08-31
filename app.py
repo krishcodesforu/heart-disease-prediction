@@ -15,8 +15,6 @@ MODEL_CANDIDATES = [
     Path("heart_disease_model.pkl"), Path("models/heart_model.pkl"),
 ]
 
-AUDIO_URL = "https://raw.githubusercontent.com/krishcodesforu/heart-disease-prediction/main/makabhosda_aag.m4a"
-
 
 def inject_css():
     st.markdown("""
@@ -32,7 +30,6 @@ def inject_css():
     .hero .main-title { color:#0f172a !important; -webkit-text-fill-color:#0f172a !important; text-shadow:0 1px 1px rgba(15,23,42,.05); }
     .subtitle { color:#475569 !important; font-size:1.05rem; }
     .hero .subtitle { color:#475569 !important; }
-    .section-card { animation:floatIn .5s ease-out both; }
     .result-card { padding:1.5rem; border-radius:22px; border:1px solid #e2e8f0; background:rgba(255,255,255,.96); box-shadow:0 12px 35px rgba(15,23,42,.10); animation:floatIn .65s ease-out; }
     .result-title { font-size:1.8rem; font-weight:800; }
     .pulse-dot { width:12px; height:12px; border-radius:50%; background:#ef4444; display:inline-block; margin-right:8px; position:relative; }
@@ -41,7 +38,7 @@ def inject_css():
     div.stButton > button:hover, div.stFormSubmitButton > button:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(15,23,42,.12); }
     .model-ready { padding:.65rem 1rem; border-radius:12px; background:linear-gradient(90deg,#ecfdf5,#f0fdf4,#ecfdf5); background-size:700px 100%; animation:shimmer 3s linear infinite; border:1px solid #bbf7d0; }
     @media (max-width:700px) {
-        .main-title { font-size:2.1rem; color:#0f172a !important; -webkit-text-fill-color:#0f172a !important; }
+        .main-title { font-size:2.1rem; color:#0f172a !important; }
         .hero .main-title { color:#0f172a !important; -webkit-text-fill-color:#0f172a !important; }
         .heart-icon { font-size:3rem; }
         .hero { padding:1.25rem; }
@@ -49,30 +46,6 @@ def inject_css():
     }
     </style>
     """, unsafe_allow_html=True)
-
-
-def play_custom_audio():
-    """Play the single custom recording automatically after every prediction."""
-    components.html(f"""
-    <html>
-    <body style="margin:0;background:transparent;overflow:hidden;">
-      <audio id="predictionAudio" autoplay playsinline preload="auto">
-        <source src="{AUDIO_URL}" type="audio/mp4">
-      </audio>
-      <script>
-        const audio = document.getElementById('predictionAudio');
-        audio.volume = 1.0;
-        const startAudio = () => {{
-          const promise = audio.play();
-          if (promise) promise.catch(() => {{}});
-        }};
-        startAudio();
-        setTimeout(startAudio, 150);
-        setTimeout(startAudio, 500);
-      </script>
-    </body>
-    </html>
-    """, height=1)
 
 
 def load_model():
@@ -176,17 +149,14 @@ def show_result(prediction, probability, model_name):
     with c3: st.metric("Model Confidence", f"{confidence:.1f}%")
     st.markdown("### Risk Probability")
     st.progress(float(np.clip(probability,0,1)), text=f"Estimated probability: {risk_percent:.1f}%")
-
     if prediction:
         st.error("🚨 The model indicates an elevated likelihood of heart disease. Please consult a qualified healthcare professional for proper evaluation.")
     else:
         st.success("✅ The model indicates a lower likelihood of heart disease based on the supplied inputs.")
         st.balloons()
-
     if model_name: st.caption(f"Prediction generated using: `{model_name}`")
     else: st.warning("No trained pickle model was found. This result uses the app's fallback scoring estimator and should not be treated as a medical diagnosis.")
     st.info("ℹ️ This application is for educational and demonstration purposes only. It does not replace professional medical advice, diagnosis, or treatment.")
-    play_custom_audio()
     st.markdown('</div>', unsafe_allow_html=True)
 
 
@@ -200,7 +170,7 @@ def main():
         st.markdown("### About")
         st.write("Estimate heart disease risk from clinical measurements using the configured prediction model.")
         st.markdown("### ✨ Experience")
-        st.write("Animated interface, live risk visualization and custom prediction audio.")
+        st.write("Animated interface, live risk visualization and result animations.")
         st.divider()
         st.caption("Educational tool • Not a medical diagnosis")
 
