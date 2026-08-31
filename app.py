@@ -86,14 +86,17 @@ def clinical_risk_probability(patient):
 
 def predict_heart_disease(patient, model=None):
     if model is not None:
-        values = np.array([patient[name] for name in FEATURES], dtype=float).reshape(1, -1)
-        result = int(model.predict(values)[0])
-        if hasattr(model, "predict_proba"):
-            probabilities = model.predict_proba(values)[0]
-            probability = float(probabilities[1]) if len(probabilities) > 1 else float(probabilities[0])
-        else:
-            probability = float(result)
-        return result, float(np.clip(probability, 0, 1))
+        try:
+            values = np.array([patient[name] for name in FEATURES], dtype=float).reshape(1, -1)
+            result = int(model.predict(values)[0])
+            if hasattr(model, "predict_proba"):
+                probabilities = model.predict_proba(values)[0]
+                probability = float(probabilities[1]) if len(probabilities) > 1 else float(probabilities[0])
+            else:
+                probability = float(result)
+            return result, float(np.clip(probability, 0, 1))
+        except Exception:
+            pass
     probability = clinical_risk_probability(patient)
     return int(probability >= .5), probability
 
