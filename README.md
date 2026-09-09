@@ -2,6 +2,12 @@
 
 A Streamlit-based web application for predicting heart disease risk based on patient medical data.
 
+## 🚀 Live Demo
+
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://heart-disease-prediction-cstecn7tmchnc6qpc7g526.streamlit.app/)
+
+👉 **Try it now:** [https://heart-disease-prediction-cstecn7tmchnc6qpc7g526.streamlit.app/](https://heart-disease-prediction-cstecn7tmchnc6qpc7g526.streamlit.app/)
+
 ## Features
 
 - Interactive patient data input form
