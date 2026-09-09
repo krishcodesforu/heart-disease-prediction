@@ -89,7 +89,7 @@ MIT License
 
 ## Author
 
-Your Name
+Krishna Kumar Singh
 
 ## Support
 
